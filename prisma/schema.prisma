@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,70 +7,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// criar uma migration: yarn prisma migrate dev
 model User {
-  id String @id @default(uuid())
-  name String
-  email String
-  password String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+  id          String       @id @default(uuid())
+  name        String
+  email       String       @unique
+  password    String
+  created_at  DateTime?    @default(now())
+  updated_at  DateTime?    @default(now())
+  role        String       @default("user")
+  balance     Float        @default(0)
+  coins       Int          @default(0)
+  carts       Cart[]
+  gameResults GameResult[]
 
   @@map("users")
 }
 
-model Category{
-  id String @id @default(uuid())
-  name String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+model Animal {
+  id         String   @id @default(uuid())
+  name       String
+  type       String
+  size       String?
+  image      String?
+  created_at DateTime @default(now())
 
-  @@map("categories")
-  products Product[]
+  // 🔗 RELAÇÃO
+  periodoId String
+  periodo Periodo @relation(fields: [periodoId], references: [id])
+
+  @@map("animals")
 }
 
-model Product{
-  id String @id @default(uuid())
-  name String
-  price String
-  description String
-  banner String
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
+model Periodo {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  image       String? 
 
-  category Category @relation(fields: [category_id], references: [id])
+  eraId String
+  era Era @relation(fields: [eraId], references: [id], onDelete: Restrict)
+
+  animals Animal[]
+
+  @@map("periodos")
+}
+
+model Era {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  image       String? 
+  created_at  DateTime @default(now())
+
+  // 🔗 RELAÇÃO
+  periodos Periodo[]  
+
+  @@map("eras")
+}
+
+
+
+model Product {
+  id          String     @id @default(uuid())
+  name        String
+  price       Float
+  description String?
+  created_at  DateTime   @default(now())
+  items       CartItem[]
 
   @@map("products")
-  category_id String
-  items Item[]
 }
 
-model Order{
-  id String @id @default(uuid())
-  table Int
-  status Boolean @default(false)
-  draft Boolean @default(true)
-  name String?
+model Cart {
+  id         String     @id @default(uuid())
+  user_id    String
+  status     String     @default("open")
+  created_at DateTime   @default(now())
+  user       User       @relation(fields: [user_id], references: [id])
+  items      CartItem[]
 
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  @@map("orders")
-  items Item[]
+  @@map("carts")
 }
 
-model Item{
-  id String @id @default(uuid())
-  amount Int
-
-  created_at DateTime? @default(now())
-  updated_at DateTime? @default(now())
-
-  order Order @relation(fields: [order_id], references: [id])
-  product Product @relation(fields: [product_id], references: [id])
-
-  @@map("items")
-  order_id String
+model CartItem {
+  id         String  @id @default(uuid())
+  quantity   Int
+  cart_id    String
   product_id String
+  cart       Cart    @relation(fields: [cart_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
 
+  @@map("cart_items")
+}
+
+model GameResult {
+  id               String   @id @default(uuid())
+  user_id          String
+  quantidade_pares Int
+  tempo_gasto      Float
+  tentativas       Int
+  pontos           Int
+  created_at       DateTime @default(now())
+  user             User     @relation(fields: [user_id], references: [id])
+
+  @@map("game_results")
 }

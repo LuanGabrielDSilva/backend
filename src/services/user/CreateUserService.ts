@@ -3,22 +3,23 @@ import { hash } from 'bcryptjs'
 
 interface UserRequest{
   name: string;
-  email: string;
+  email: string; 
   password: string;
+  role?: string;
 }
 
 class CreateUserService{
-  async execute({ name, email, password }: UserRequest){
+  async execute({ name, email, password, role }: UserRequest){
 
-    // verificar se ele enviou um email
-    if(!email){
-      throw new Error("Email incorrect")
+    // 🔥 validação
+    if(!name || !email || !password){
+      throw new Error("Preencha todos os campos")
     }
 
-    //Verificar se esse email já está cadastrado na plataforma
-    const userAlreadyExists = await prismaClient.user.findFirst({
+    // 🔥 verificar se já existe
+    const userAlreadyExists = await prismaClient.user.findUnique({
       where:{
-        email: email
+        email
       }
     })
 
@@ -30,20 +31,23 @@ class CreateUserService{
 
     const user = await prismaClient.user.create({
       data:{
-        name: name,
-        email: email,
+        name,
+        email,
         password: passwordHash,
+        role: role || "user",
       },
       select:{
         id: true,
         name: true,       
         email: true,
+        coins: true,
+        balance: true,
+        role: true
       }
     })
 
-
-    return user;
-  }
+    return user; 
+  } 
 }
 
 export { CreateUserService }

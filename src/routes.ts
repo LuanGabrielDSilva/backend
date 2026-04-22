@@ -1,72 +1,76 @@
 import { Router } from 'express';
 import multer from 'multer';
+import prismaClient from './prisma';
+
+import { CreateUserController } from './controllers/user/CreateUserController';
+import { AuthUserController } from './controllers/user/AuthUserController';
+import { DetailuserController } from './controllers/user/DetailUserController';
+import { ListUserController } from './controllers/user/ListUserController';
+import { DeleteUserController } from './controllers/user/DeleteUserController';
+import { UpdateUserController } from './controllers/user/UpdateUserController';
+import { CreateProductController } from "./controllers/product/CreateProductController";
+
+import { isAuthenticated } from './middlewares/isAuthenticated';
+
+import animalRoutes from './routes/animal.routes';
+import cartRoutes from './routes/cart.routes';
+import eraRoutes from './routes/era.routes';
+import periodoRoutes from "./routes/periodo.routes";
 
 
-
-
-import { CreateUserController } from './controllers/user/CreateUserController'
-import { AuthUserController } from './controllers/user/AuthUserController'
-import { DetailuserController } from './controllers/user/DetailUserController'
-
-import { CreateCategoryController } from './controllers/category/CreateCategoryController'
-import { ListCategoryController } from './controllers/category/ListCategoryController'
-
-import { CreateProductController } from './controllers/product/CreateProductController'
-import { ListByCategoryController } from './controllers/product/ListByCategoryController'
-
-import { CreateOrderController } from './controllers/order/CreateOrderController'
-import { RemoveOrderController } from './controllers/order/RemoveOrderController'
-
-import { AddItemController } from './controllers/order/AddItemController'
-import { RemoveItemController } from './controllers/order/RemoveItemController'
-import { SendOrderController } from './controllers/order/SendOrderController'
-
-import { ListOrdersController } from './controllers/order/ListOrdersController'
-import { DetailOrderController } from './controllers/order/DetailOrderController'
-import { FinishOrderController } from './controllers/order/FinishOrderController'
-
-
-import { isAuthenticated } from './middlewares/isAuthenticated'
-
-import uploadConfig from './config/multer'
+import uploadConfig from './config/multer';
 
 const router = Router();
 
 const upload = multer(uploadConfig.upload("./tmp"));
 
-//-- ROTAS USER --
-router.post('/users', new CreateUserController().handle)
+/* ======================
+   👤 USERS
+====================== */
+router.post('/users', new CreateUserController().handle);
+router.post('/session', new AuthUserController().handle);
+router.get('/me', isAuthenticated, new DetailuserController().handle);
+router.get('/users', new ListUserController().handle);
+router.put('/users/:id', isAuthenticated, new UpdateUserController().handle);
+router.delete('/users/:id', isAuthenticated, new DeleteUserController().handle);
 
-router.post('/session', new AuthUserController().handle)
+/* ======================
+   🌍 ERAS
+====================== */
+router.use('/eras', eraRoutes);
 
-router.get('/me', isAuthenticated,  new DetailuserController().handle )
+/* ======================
+   🦖 ANIMALS
+====================== */
+router.use('/animals', animalRoutes);
 
-//-- ROTAS CATEGORY
-router.post('/category', isAuthenticated, new CreateCategoryController().handle )
+//Periodo
 
-router.get('/category', isAuthenticated, new ListCategoryController().handle )
+router.use("/periodos", periodoRoutes);
 
-//-- ROTAS PRODUCT
-router.post('/product', isAuthenticated, upload.single('file'), new CreateProductController().handle )
+/* ======================
+   🛒 CART
+====================== */
+router.use('/cart', cartRoutes);
 
-router.get('/category/product', isAuthenticated, new ListByCategoryController().handle )
+/* ======================
+   📦 PRODUCTS
+====================== */
+router.post("/products", new CreateProductController().handle);
 
-//-- ROTAS ORDER
-router.post('/order', isAuthenticated, new CreateOrderController().handle )
-router.delete('/order', isAuthenticated, new RemoveOrderController().handle )
+/* ======================
+   📊 ADMIN STATS (NOVO)
+====================== */
+router.get("/admin/stats", async (req, res) => {
+  const users = await prismaClient.user.count();
+  const eras = await prismaClient.era.count();
+  const animals = await prismaClient.animal.count();
 
-router.post('/order/add', isAuthenticated, new AddItemController().handle )
-router.delete('/order/remove', isAuthenticated, new RemoveItemController().handle )
+  return res.json({
+    users,
+    eras,
+    animals
+  });
+});
 
-router.put('/order/send', isAuthenticated, new SendOrderController().handle )
-
-router.get('/orders', isAuthenticated, new ListOrdersController().handle )
-router.get('/order/detail', isAuthenticated, new DetailOrderController().handle )
-
-router.put('/order/finish', isAuthenticated, new FinishOrderController().handle )
-
-
-
-
-
-export { router }; 
+export { router };
