@@ -26,7 +26,6 @@ class ListAnimalByEraService {
     return animals.map(a => ({
       id: a.id,
       name: a.name,
-      type: a.type,
       size: a.size,
       image: a.image,
       periodo: a.periodo.name,

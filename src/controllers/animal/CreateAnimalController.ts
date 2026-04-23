@@ -3,16 +3,17 @@ import { CreateAnimalService } from "../../services/animal/CreateAnimalService";
 
 class CreateAnimalController {
   async handle(req: Request, res: Response) {
-    const { name, type, size, periodoId, image } = req.body; // 👈 ADICIONA AQUI
+
+    const { name, size, periodoId, image, dieta } = req.body;
 
     const service = new CreateAnimalService();
 
     const animal = await service.execute({
       name,
-      type,
       size,
       periodoId,
-      image 
+      image,
+      dieta
     });
 
     return res.json(animal);

@@ -30,6 +30,7 @@ model Animal {
   size       String?
   image      String?
   created_at DateTime @default(now())
+  dieta      String?
 
   // 🔗 RELAÇÃO
   periodoId String
