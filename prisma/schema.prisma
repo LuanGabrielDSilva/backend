@@ -8,33 +8,71 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  name        String
-  email       String       @unique
-  password    String
-  created_at  DateTime?    @default(now())
-  updated_at  DateTime?    @default(now())
-  role        String       @default("user")
-  balance     Float        @default(0)
-  coins       Int          @default(0)
-  carts       Cart[]
-  gameResults GameResult[]
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  role String @default("user")
+
+  balance Float @default(0)
+  coins   Int   @default(0)
+
+  level Int @default(1)
+  xp    Int @default(0)
+
+  gameResults  GameResult[]
+  quizResults  QuizResult[]
+  transactions Transaction[]
+  carts        Cart[]
+
+  inventory Inventory[] // ✅ correto
 
   @@map("users")
 }
 
-model Animal {
+model Transaction {
   id         String   @id @default(uuid())
-  name       String
+  userId     String
   type       String
-  size       String?
-  image      String?
+  amount     Int
+  source     String
   created_at DateTime @default(now())
-  dieta      String?
+  user       User     @relation(fields: [userId], references: [id])
+}
 
-  // 🔗 RELAÇÃO
-  periodoId String
-  periodo Periodo @relation(fields: [periodoId], references: [id])
+model Game {
+  id         String       @id @default(uuid())
+  name       String
+  slug       String
+  baseCoins  Int          @default(100)
+  baseXP     Int          @default(50)
+  created_at DateTime     @default(now())
+  results    GameResult[]
+}
+
+model Animal {
+  id            String   @id @default(uuid())
+  name          String
+  type          String
+  size          String?
+  image         String?
+  created_at    DateTime @default(now())
+  periodoId     String
+  dieta         String?
+  description   String?
+  shadowImage   String?
+
+  habitat       String?
+  clima         String?
+  descoberta    String?
+  local         String?
+  scientificName String?
+
+  periodo       Periodo @relation(fields: [periodoId], references: [id])
 
   @@map("animals")
 }
@@ -43,38 +81,35 @@ model Periodo {
   id          String   @id @default(uuid())
   name        String
   description String?
-  image       String? 
-
-  eraId String
-  era Era @relation(fields: [eraId], references: [id], onDelete: Restrict)
-
-  animals Animal[]
+  image       String?
+  eraId       String
+  era         Era      @relation(fields: [eraId], references: [id])
+  animals     Animal[]
 
   @@map("periodos")
 }
 
 model Era {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   description String?
-  image       String? 
-  created_at  DateTime @default(now())
-
-  // 🔗 RELAÇÃO
-  periodos Periodo[]  
+  image       String?
+  created_at  DateTime  @default(now())
+  periodos    Periodo[]
 
   @@map("eras")
 }
 
-
-
 model Product {
-  id          String     @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   price       Float
   description String?
-  created_at  DateTime   @default(now())
-  items       CartItem[]
+
+  created_at DateTime @default(now())
+
+  items     CartItem[]
+  inventory Inventory[]
 
   @@map("products")
 }
@@ -102,14 +137,50 @@ model CartItem {
 }
 
 model GameResult {
-  id               String   @id @default(uuid())
-  user_id          String
-  quantidade_pares Int
-  tempo_gasto      Float
-  tentativas       Int
-  pontos           Int
-  created_at       DateTime @default(now())
-  user             User     @relation(fields: [user_id], references: [id])
+  id         String   @id @default(uuid())
+  user_id    String
+  game_id    String?
+  score      Int
+  coins      Int
+  xp         Int
+  created_at DateTime @default(now())
+  game       Game?    @relation(fields: [game_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
+}
 
-  @@map("game_results")
+model QuizQuestion {
+  id         String   @id @default(uuid())
+  question   String
+  optionA    String
+  optionB    String
+  optionC    String
+  optionD    String
+  correct    String
+  difficulty String   @default("easy")
+  created_at DateTime @default(now())
+}
+
+model QuizResult {
+  id          String   @id @default(uuid())
+  userId      String
+  score       Int
+  hits        Int
+  coinsEarned Int
+  xpEarned    Int
+  created_at  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Inventory {
+  id String @id @default(uuid())
+
+  userId    String
+  productId String
+
+  quantity Int @default(1)
+
+  created_at DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
 }

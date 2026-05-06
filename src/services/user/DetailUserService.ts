@@ -1,21 +1,35 @@
 import prismaClient from "../../prisma";
 
-class DetailUserService{
-  async execute(user_id: string){
+class DetailUserService {
+
+  async execute(user_id: string) {
 
     const user = await prismaClient.user.findFirst({
-      where:{
+      where: {
         id: user_id
       },
-      select:{
+
+      select: {
         id: true,
         name: true,
         email: true,
+
+        // 👤 cargo
+        role: true,
+
+        // 💰 carteira
+        balance: true,
+        coins: true,
+
+        // 🧠 progressão
+        xp: true,
+        level: true
       }
-    })
+    });
 
     return user;
+
   }
 }
 
-export { DetailUserService }
+export { DetailUserService };

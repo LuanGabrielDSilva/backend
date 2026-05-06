@@ -3,8 +3,22 @@ import { UpdateAnimalService } from "../../services/animal/UpdateAnimalService";
 
 class UpdateAnimalController {
   async handle(req: Request, res: Response) {
+
     const { id } = req.params;
-    const { name, type, size, eraId, image } = req.body;
+
+    const {
+      name,
+      type,
+      size,
+      eraId,
+      image,
+      dieta,
+      habitat,
+      clima,
+      descoberta,
+      local,
+      periodoId
+    } = req.body;
 
     const service = new UpdateAnimalService();
 
@@ -14,7 +28,13 @@ class UpdateAnimalController {
       type,
       size,
       eraId,
-      image
+      image,
+      dieta,
+      habitat,
+      clima,
+      descoberta,
+      local,
+      periodoId
     });
 
     return res.json(animal);

@@ -1,9 +1,15 @@
-import { Request, Response } from 'express'
-import { CreateUserService } from '../../services/user/CreateUserService'
+import { Request, Response } from "express";
+import { CreateUserService } from "../../services/user/CreateUserService";
 
-class CreateUserController{
-  async handle(req: Request, res: Response){
+class CreateUserController {
+  async handle(req: Request, res: Response) {
     const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        error: "Name, email and password are required"
+      });
+    }
 
     const createUserService = new CreateUserService();
 
@@ -12,10 +18,10 @@ class CreateUserController{
       email,
       password,
       role
-    }); 
- 
-    return res.json(user) 
-  } 
-} 
- 
-export { CreateUserController }
+    });
+
+    return res.status(201).json(user);
+  }
+}
+
+export { CreateUserController };

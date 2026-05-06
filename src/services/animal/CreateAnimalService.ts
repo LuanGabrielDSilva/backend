@@ -6,12 +6,28 @@ interface AnimalRequest {
   periodoId: string;
   image?: string;
   dieta?: string;
+
+  // NOVOS CAMPOS
+  habitat?: string;
+  clima?: string;
+  local?: string;
+  descoberta?: string;
 }
 
 class CreateAnimalService {
-  async execute({ name, size, image, periodoId, dieta }: AnimalRequest) {
+  async execute({
+    name,
+    size,
+    image,
+    periodoId,
+    dieta,
+    habitat,
+    clima,
+    local,
+    descoberta
+  }: AnimalRequest) {
 
-    // 🔐 1. VALIDAR PERÍODO
+    // 🔐 VALIDAR PERÍODO
     const periodoExists = await prisma.periodo.findUnique({
       where: { id: periodoId }
     });
@@ -20,19 +36,26 @@ class CreateAnimalService {
       throw new Error("Período inválido");
     }
 
-    // 🦖 2. CRIAR ANIMAL
-   const animal = await prisma.animal.create({
-  data: {
-    name,
-    type: "unknown", // ou vem do frontend
-    size,
-    image,
-    dieta,
-    periodo: {
-      connect: { id: periodoId }
-    }
-  }
-});
+    // 🦖 CRIAR ANIMAL
+    const animal = await prisma.animal.create({
+      data: {
+        name,
+        type: "unknown",
+        size,
+        image,
+        dieta,
+
+        // NOVOS CAMPOS
+        habitat,
+        clima,
+        local,
+        descoberta,
+
+        periodo: {
+          connect: { id: periodoId }
+        }
+      }
+    });
 
     return animal;
   }
