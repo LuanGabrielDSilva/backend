@@ -17,6 +17,10 @@ import { ListUserController } from "./controllers/user/ListUserController";
 import { DeleteUserController } from "./controllers/user/DeleteUserController";
 import { UpdateUserController } from "./controllers/user/UpdateUserController";
 
+import { CreateFavoriteController } from "./controllers/favorite/CreateFavoriteController";
+import { ListFavoritesController } from "./controllers/favorite/ListFavoritesController";
+import { DeleteFavoriteController } from "./controllers/favorite/DeleteFavoriteController";
+
 /* ======================
    📦 PRODUCT CONTROLLERS
 ====================== */
@@ -183,6 +187,28 @@ router.get(
     });
 
   }
+);
+
+/* =========================================================
+   ❤️ FAVORITES
+========================================================= */
+
+router.post(
+  "/favorites",
+  isAuthenticated,
+  new CreateFavoriteController().handle
+);
+
+router.get(
+  "/favorites",
+  isAuthenticated,
+  new ListFavoritesController().handle
+);
+
+router.delete(
+  "/favorites",
+  isAuthenticated,
+  new DeleteFavoriteController().handle
 );
 
 export { router };

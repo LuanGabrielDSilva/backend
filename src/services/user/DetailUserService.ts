@@ -23,7 +23,14 @@ class DetailUserService {
 
         // 🧠 progressão
         xp: true,
-        level: true
+        level: true,
+
+        // ❤️ favoritos
+        favorites: {
+          include: {
+            animal: true
+          }
+        }
       }
     });
 
