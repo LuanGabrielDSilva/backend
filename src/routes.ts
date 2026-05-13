@@ -20,11 +20,13 @@ import { UpdateUserController } from "./controllers/user/UpdateUserController";
 import { CreateFavoriteController } from "./controllers/favorite/CreateFavoriteController";
 import { ListFavoritesController } from "./controllers/favorite/ListFavoritesController";
 import { DeleteFavoriteController } from "./controllers/favorite/DeleteFavoriteController";
+import { UploadController } from "./controllers/upload/UploadController";
 
 /* ======================
    📦 PRODUCT CONTROLLERS
 ====================== */
 import { CreateProductController } from "./controllers/product/CreateProductController";
+import { ListCommentsController } from "./controllers/comment/ListCommentsController";
 
 /* ======================
    🛣️ ROUTES
@@ -36,22 +38,13 @@ import periodoRoutes from "./routes/periodo.routes";
 import walletRoutes from "./routes/wallet.routes";
 import rewardRoutes from "./routes/reward.routes";
 import quizRoutes from "./routes/quiz.routes";
+import productRoutes from "./routes/product.routes";
+import expeditionRoutes from "./routes/expedition.routes";
 
 const router = Router();
 
 const upload = multer(
   uploadConfig.upload("./tmp")
-);
-
-/* =========================================================
-   📦 PRODUCTS (LISTAR)
-========================================================= */
-
-import { ListProductsController } from "./controllers/product/ListProductsController";
-
-router.get(
-  "/products",
-  new ListProductsController().handle
 );
 
 /* =========================================================
@@ -154,14 +147,11 @@ router.use(
   cartRoutes
 );
 
-/* =========================================================
-   📦 PRODUCTS
-========================================================= */
-
-router.post(
-  "/products",
-  new CreateProductController().handle
+router.get(
+  "/products/:id/comments",
+  new ListCommentsController().handle
 );
+
 
 /* =========================================================
    📊 ADMIN STATS
@@ -210,5 +200,18 @@ router.delete(
   isAuthenticated,
   new DeleteFavoriteController().handle
 );
+
+router.post(
+  "/upload",
+  upload.single("file"),
+  new UploadController().handle
+);
+
+router.use(
+  "/products",
+  productRoutes
+);
+
+router.use("/expeditions", expeditionRoutes);
 
 export { router };

@@ -20,8 +20,12 @@ export function isAuthenticated(
 
   const [, token] = authToken.split(" ")
 
-  
+  // 👇 COLOQUE AQUI
+  console.log(process.env.JWT_SECRET)
+  console.log(token)
+
   try{
+
     //Validar esse token.
     const { sub } = verify(
       token,
@@ -34,9 +38,11 @@ export function isAuthenticated(
     return next();
 
   }catch(err){
+
+    // 👇 E AQUI
+    console.log(err)
+
     return res.status(401).end();
   }
-
-
 
 }

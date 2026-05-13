@@ -1,13 +1,20 @@
 import prismaClient from "../../prisma";
 
 class CreateProductService {
-  async execute(name: string, price: number, description?: string) {
+
+  async execute(
+    name: string,
+    price: number,
+    description?: string,
+    image?: string
+  ) {
 
     const product = await prismaClient.product.create({
       data: {
         name,
         price,
-        description
+        description,
+        image
       }
     });
 

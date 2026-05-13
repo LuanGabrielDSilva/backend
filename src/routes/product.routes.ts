@@ -1,12 +1,24 @@
 import { Router } from "express";
+
 import { ListProductsController } from "../controllers/product/ListProductsController";
+import { CreateProductController } from "../controllers/product/CreateProductController";
+import { DetailProductController } from "../controllers/product/DetailProductController";
 
 const router = Router();
 
-const listProductsController = new ListProductsController();
+router.get(
+  "/",
+  new ListProductsController().handle
+);
 
-router.get("/", (req, res) => {
-  listProductsController.handle(req, res);
-});
+router.get(
+  "/:id",
+  new DetailProductController().handle
+);
+
+router.post(
+  "/",
+  new CreateProductController().handle
+);
 
 export default router;

@@ -4,11 +4,16 @@ import { CreateProductService } from "../../services/product/CreateProductServic
 class CreateProductController {
   async handle(req: Request, res: Response) {
 
-    const { name, price, description } = req.body;
+    const { name, price, description, image } = req.body;
 
     const service = new CreateProductService();
 
-    const result = await service.execute(name, price, description);
+    const result = await service.execute(
+      name,
+      price,
+      description,
+      image
+    );
 
     return res.json(result);
   }

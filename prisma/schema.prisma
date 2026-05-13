@@ -28,10 +28,10 @@ model User {
   quizResults  QuizResult[]
   transactions Transaction[]
   carts        Cart[]
-
-  inventory Inventory[] // ✅ correto
-
+  inventory Inventory[]
   favorites Favorite[]
+  comments Comment[]
+  expeditions Expedition[]
 
   @@map("users")
 }
@@ -67,7 +67,6 @@ model Animal {
   periodoId   String
   dieta       String?
   description String?
-  shadowImage String?
 
   habitat        String?
   clima          String?
@@ -126,11 +125,13 @@ model Product {
   name        String
   price       Float
   description String?
+  image       String?
 
   created_at DateTime @default(now())
 
   items     CartItem[]
   inventory Inventory[]
+  comments Comment[]
 
   @@map("products")
 }
@@ -204,4 +205,37 @@ model Inventory {
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  content String
+
+  created_at DateTime @default(now())
+
+  userId String
+  productId String
+
+  user User @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("comments")
+}
+
+model Expedition {
+  id          String   @id @default(uuid())
+
+  userId      String
+  title       String
+  description String?
+  status      String   @default("completed")
+  location    String?
+
+  rewardXp    Int      @default(0)
+  rewardCoins Int      @default(0)
+
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
