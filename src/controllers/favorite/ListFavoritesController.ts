@@ -4,7 +4,7 @@ import { ListFavoritesService } from "../../services/favorite/ListFavoritesServi
 class ListFavoritesController {
   async handle(req: Request, res: Response) {
 
-    const userId = req.user_id;
+    const userId = req.userId;
 
     const service = new ListFavoritesService();
 

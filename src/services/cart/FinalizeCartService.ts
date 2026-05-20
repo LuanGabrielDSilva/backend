@@ -2,11 +2,11 @@ import prismaClient from "../../prisma";
 
 class FinalizeCartService {
 
-  async execute(user_id: string) {
+  async execute(userId: string) {
 
     const cart = await prismaClient.cart.findFirst({
       where: {
-        user_id,
+        userId,
         status: "open"
       },
       include: {
@@ -30,7 +30,7 @@ class FinalizeCartService {
     // pega usuário
     const user = await prismaClient.user.findUnique({
       where: {
-        id: user_id
+        id: userId
       }
     });
 
@@ -46,7 +46,7 @@ class FinalizeCartService {
     // desconta saldo
     await prismaClient.user.update({
       where: {
-        id: user_id
+        id: userId
       },
       data: {
         balance: user.balance - total
@@ -64,16 +64,22 @@ class FinalizeCartService {
     });
 
     await prismaClient.expedition.create({
-  data: {
-    userId: user_id,
-    title: "Compra no Acervo Paleontológico",
-    description: `Compra de ${cart.items.length} item(s)`,
-    status: "completed",
-    location: "Loja do Museu",
-    rewardCoins: Math.floor(total),
-    rewardXp: Math.floor(total / 10),
-  }
-});
+      data: {
+        userId: userId,
+        title: "Compra no Acervo Paleontológico",
+        description: `Compra de ${cart.items.length} item(s)`,
+        status: "completed",
+        location: "Loja do Museu",
+        rewardCoins: Math.floor(total),
+        rewardXp: Math.floor(total / 10),
+
+        products: {
+          connect: cart.items.map((item) => ({
+            id: item.product.id
+          }))
+        }
+      }
+    });
 
     return {
       message: "Compra finalizada",

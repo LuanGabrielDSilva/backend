@@ -3,38 +3,53 @@ import { UpdateAnimalService } from "../../services/animal/UpdateAnimalService";
 
 class UpdateAnimalController {
   async handle(req: Request, res: Response) {
-
     const { id } = req.params;
 
     const {
       name,
-      type,
+      scientificName,
       size,
+      weight,
       eraId,
       image,
+
       dieta,
       habitat,
       clima,
+      locomotion,
+      defense,
       descoberta,
       local,
-      periodoId
+      description,
+
+      periodoId,
+
+      // 🦖 NOVO
+      preyIds
     } = req.body;
 
     const service = new UpdateAnimalService();
 
     const animal = await service.execute({
       id,
+
       name,
-      type,
+      scientificName,
       size,
+      weight,
       eraId,
       image,
+
       dieta,
       habitat,
       clima,
+      locomotion,
+      defense,
       descoberta,
       local,
-      periodoId
+      description,
+      periodoId,
+      preyIds
     });
 
     return res.json(animal);

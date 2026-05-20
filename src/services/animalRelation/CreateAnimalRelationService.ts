@@ -5,7 +5,7 @@ interface Request {
   preyId: string;
 }
 
-class CreateAnimalRelationService {
+class CreatepredatorRelationService {
   async execute({
     predatorId,
     preyId,
@@ -16,7 +16,7 @@ class CreateAnimalRelationService {
     }
 
     const relation =
-      await prismaClient.animalRelation.create({
+      await prismaClient.predatorRelation.create({
         data: {
           predatorId,
           preyId,
@@ -27,4 +27,4 @@ class CreateAnimalRelationService {
   }
 }
 
-export { CreateAnimalRelationService };
+export { CreatepredatorRelationService };

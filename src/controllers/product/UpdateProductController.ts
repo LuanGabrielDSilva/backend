@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import prismaClient from "../../prisma";
+import { UpdateProductService } from "../../services/product/UpdateProductService";
 
 class UpdateProductController {
 
@@ -11,27 +11,23 @@ class UpdateProductController {
       name,
       price,
       description,
-      image
+      image,
+      variants
     } = req.body;
 
-    const product =
-      await prismaClient.product.update({
+    const service = new UpdateProductService();
 
-        where: { id },
+    const result = await service.execute(
+      id,
+      name,
+      Number(price),
+      description,
+      image,
+      variants || []
+    );
 
-        data: {
-          name,
-          price,
-          description,
-          image
-        }
-
-      });
-
-    return res.json(product);
-
+    return res.json(result);
   }
-
 }
 
 export { UpdateProductController };

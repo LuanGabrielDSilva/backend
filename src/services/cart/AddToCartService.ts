@@ -2,10 +2,10 @@ import prismaClient from "../../prisma";
 import { GetOrCreateCartService } from "./GetOrCreateCartService";
 
 class AddToCartService {
-  async execute(user_id: string, product_id: string, quantity: number) {
+  async execute(userId: string, product_id: string, quantity: number) {
 
     const cartService = new GetOrCreateCartService();
-    const cart = await cartService.execute(user_id);
+    const cart = await cartService.execute(userId);
 
     // 🔎 verifica se produto já existe no carrinho
     const existingItem = await prismaClient.cartItem.findFirst({

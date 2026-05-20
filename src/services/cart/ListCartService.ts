@@ -1,12 +1,11 @@
 import prismaClient from "../../prisma";
 
 class ListCartService {
-  async execute(user_id: string) {
+  async execute(userId: string) {
 
     const cart = await prismaClient.cart.findFirst({
       where: {
-        user_id,
-        status: "open"
+        userId
       },
       include: {
         items: {

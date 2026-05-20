@@ -7,16 +7,16 @@ export async function isAdmin(
   next: NextFunction
 ) {
   try {
-    const user_id = req.user_id;
+    const userId = req.userId;
 
-    // 🔒 verifica se veio user_id
-    if (!user_id) {
+    // 🔒 verifica se veio userId
+    if (!userId) {
       return res.status(401).json({ error: "Usuário não autenticado" });
     }
 
     // 🔎 busca usuário no banco
     const user = await prismaClient.user.findUnique({
-      where: { id: user_id }
+      where: { id: userId }
     });
 
     // 🚫 se não existir

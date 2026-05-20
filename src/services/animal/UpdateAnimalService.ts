@@ -4,68 +4,189 @@ interface AnimalRequest {
   id: string;
 
   name?: string;
-  type?: string;
+  scientificName?: string;
+
   size?: string;
+  weight?: string;
+
   eraId?: string;
   image?: string;
 
-  // NOVOS CAMPOS
   dieta?: string;
   habitat?: string;
   clima?: string;
+
+  locomotion?: string;
+  defense?: string;
+
   local?: string;
   descoberta?: string;
 
+  description?: string;
+
   periodoId?: string;
+
+  preyIds?: string[];
 }
 
 class UpdateAnimalService {
+
   async execute({
     id,
     name,
-    type,
+    scientificName,
     size,
+    weight,
     eraId,
     image,
     dieta,
     habitat,
     clima,
+    locomotion,
+    defense,
     local,
     descoberta,
-    periodoId
+    description,
+    periodoId,
+    preyIds
   }: AnimalRequest) {
 
     if (!id) {
       throw new Error("ID inválido");
     }
 
-    const animal = await prismaClient.animal.update({
+    const existingAnimal =
+      await prismaClient.animal.findUnique({
+        where: { id }
+      });
+
+    if (!existingAnimal) {
+      throw new Error("Animal não encontrado");
+    }
+
+    // remove duplicados e valores vazios
+    const uniquePreyIds = preyIds
+      ? [...new Set(preyIds)].filter(Boolean)
+      : [];
+
+    // 🦖 atualiza dados do animal
+    await prismaClient.animal.update({
+
       where: { id },
 
       data: {
+
         ...(name !== undefined && { name }),
-        ...(type !== undefined && { type }),
+
+        ...(scientificName !== undefined && {
+          scientificName
+        }),
+
         ...(size !== undefined && { size }),
+
+        ...(weight !== undefined && { weight }),
+
         ...(eraId !== undefined && { eraId }),
+
         ...(image !== undefined && { image }),
 
-        // NOVOS CAMPOS
         ...(dieta !== undefined && { dieta }),
+
         ...(habitat !== undefined && { habitat }),
+
         ...(clima !== undefined && { clima }),
+
+        ...(locomotion !== undefined && {
+          locomotion
+        }),
+
+        ...(defense !== undefined && {
+          defense
+        }),
+
         ...(local !== undefined && { local }),
-        ...(descoberta !== undefined && { descoberta }),
+
+        ...(descoberta !== undefined && {
+          descoberta
+        }),
+
+        ...(description !== undefined && {
+          description
+        }),
 
         ...(periodoId !== undefined && {
           periodo: {
-            connect: { id: periodoId }
+            connect: {
+              id: periodoId
+            }
           }
         })
+
       }
+
     });
 
-    return animal;
+    // 🍖 atualiza cadeia alimentar
+    if (preyIds !== undefined) {
+
+      // remove relações antigas
+      await prismaClient.predatorRelation.deleteMany({
+        where: {
+          predatorId: id
+        }
+      });
+
+      // cria novas relações
+      if (uniquePreyIds.length > 0) {
+
+        await prismaClient.predatorRelation.createMany({
+
+          data: uniquePreyIds.map(preyId => ({
+            predatorId: id,
+            preyId
+          })),
+
+          skipDuplicates: true
+
+        });
+
+      }
+
+    }
+
+    // 🔥 retorna animal atualizado
+    return await prismaClient.animal.findUnique({
+
+      where: { id },
+
+      include: {
+
+        periodo: {
+          include: {
+            era: true
+          }
+        },
+
+        // animais que ele caça
+        preys: {
+          include: {
+            prey: true
+          }
+        },
+
+        // animais que caçam ele
+        predators: {
+          include: {
+            predator: true
+          }
+        }
+
+      }
+
+    });
+
   }
+
 }
 
 export { UpdateAnimalService };

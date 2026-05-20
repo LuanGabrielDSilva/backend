@@ -22,11 +22,11 @@ export function authorize(roles: string[] = []) {
         process.env.JWT_SECRET as string
       ) as Payload;
 
-      const user_id = sub;
+      const userId = sub;
 
       // 🔎 busca usuário
       const user = await prismaClient.user.findUnique({
-        where: { id: user_id },
+        where: { id: userId },
         select: { id: true, role: true }
       });
 
@@ -40,7 +40,7 @@ export function authorize(roles: string[] = []) {
       }
 
       // 💾 salva no request
-      req.user_id = user.id;
+      req.userId = user.id;
 
       return next();
 

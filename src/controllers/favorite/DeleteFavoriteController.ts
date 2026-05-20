@@ -5,7 +5,7 @@ class DeleteFavoriteController {
   async handle(req: Request, res: Response) {
 
     const { animalId } = req.body;
-    const userId = req.user_id;
+    const userId = req.userId;
 
     const service = new DeleteFavoriteService();
 

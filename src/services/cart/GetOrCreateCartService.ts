@@ -1,19 +1,18 @@
 import prismaClient from "../../prisma";
 
 class GetOrCreateCartService {
-  async execute(user_id: string) {
+  async execute(userId: string) {
 
     let cart = await prismaClient.cart.findFirst({
       where: {
-        user_id,
-        status: "open"
+        userId
       }
     });
 
     if (!cart) {
       cart = await prismaClient.cart.create({
         data: {
-          user_id
+          userId
         }
       });
     }

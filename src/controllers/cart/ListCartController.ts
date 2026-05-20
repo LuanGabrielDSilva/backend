@@ -3,10 +3,10 @@ import { ListCartService } from "../../services/cart/ListCartService";
 
 class ListCartController {
   async handle(req: Request, res: Response) {
-    const user_id = req.user_id;
+    const userId = req.userId;
 
     const service = new ListCartService();
-    const cart = await service.execute(user_id);
+    const cart = await service.execute(userId);
 
     return res.json(cart);
   }

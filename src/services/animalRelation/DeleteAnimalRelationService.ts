@@ -3,7 +3,7 @@ import prismaClient from "../../prisma";
 class DeleteAnimalRelationService {
   async execute(id: string) {
 
-    await prismaClient.animalRelation.delete({
+    await prismaClient.predatorRelation.delete({
       where: {
         id,
       },

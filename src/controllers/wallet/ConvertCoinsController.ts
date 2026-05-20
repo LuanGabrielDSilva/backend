@@ -7,7 +7,7 @@ class ConvertCoinsController {
 
     try {
 
-      const userId = req.user_id;
+      const userId = req.userId;
 
       const { coins } = req.body;
 

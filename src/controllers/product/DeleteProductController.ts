@@ -7,8 +7,18 @@ class DeleteProductController {
 
     const { id } = req.params;
 
+    // remove variantes
+    await prismaClient.productVariant.deleteMany({
+      where: {
+        productId: id
+      }
+    });
+
+    // remove produto
     await prismaClient.product.delete({
-      where: { id }
+      where: {
+        id
+      }
     });
 
     return res.json({

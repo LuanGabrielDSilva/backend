@@ -6,12 +6,15 @@ interface AnimalRequest {
   periodoId: string;
   image?: string;
   dieta?: string;
-
-  // NOVOS CAMPOS
   habitat?: string;
   clima?: string;
   local?: string;
   descoberta?: string;
+  scientificName?: string;
+  weight?: string;
+  locomotion?: string;
+  defense?: string;
+  description?: string;
 }
 
 class CreateAnimalService {
@@ -24,7 +27,12 @@ class CreateAnimalService {
     habitat,
     clima,
     local,
-    descoberta
+    descoberta,
+    scientificName,
+    weight,
+    locomotion,
+    defense,
+    description,
   }: AnimalRequest) {
 
     // 🔐 VALIDAR PERÍODO
@@ -37,19 +45,23 @@ class CreateAnimalService {
     }
 
     // 🦖 CRIAR ANIMAL
-    const animal = await prisma.animal.create({
+   const animal = await prisma.animal.create({
       data: {
         name,
         type: "unknown",
         size,
         image,
         dieta,
-
-        // NOVOS CAMPOS
         habitat,
         clima,
         local,
         descoberta,
+        scientificName,
+        weight,
+        locomotion,
+        defense,
+        description,
+        
 
         periodo: {
           connect: { id: periodoId }
