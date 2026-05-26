@@ -7,14 +7,16 @@ class GetAnimalFoodChainController {
 
   async handle(req: Request, res: Response) {
 
+    // 🆔 ID do animal vindo da URL (params)
     const { id } = req.params;
 
-    const service =
-      new GetAnimalFoodChainService();
+    // ⚙️ service responsável por buscar cadeia alimentar
+    const service = new GetAnimalFoodChainService();
 
-    const result =
-      await service.execute(id);
+    // 🌿 retorna predadores e presas do animal
+    const result = await service.execute(id);
 
+    // 📤 envia resposta ao frontend
     return res.json(result);
   }
 }

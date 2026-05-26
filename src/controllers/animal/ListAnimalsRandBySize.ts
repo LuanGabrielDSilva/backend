@@ -2,25 +2,43 @@ import { Request, Response } from "express";
 import prismaClient from "../../prisma";
 
 class ListAnimalsRandBySize {
+
+  // Controller responsável por listar
+  // animais aleatórios com filtro opcional de tamanho
   async handle(req: Request, res: Response) {
+
     try {
-      const size = req.query.size as string | undefined;
 
-      // 🧠 1. buscar animais (com filtro opcional)
-      const animals = await prismaClient.animal.findMany({
-        where: size ? { size } : undefined,
-      });
+      // Pega o tamanho vindo da query
+      // Exemplo:
+      // /animals/random?size=Grande
+      const size =
+        req.query.size as string | undefined;
 
-      // 🎲 2. embaralhar lista
-      const shuffled = animals.sort(() => Math.random() - 0.5);
+      // Busca os animais no banco
+      // Se existir "size", filtra
+      // Se não existir, busca todos
+      const animals =
+        await prismaClient.animal.findMany({
+          where: size
+            ? { size }
+            : undefined,
+        });
 
-      // 📦 3. retornar organizados
+      // Embaralha os animais aleatoriamente
+      const shuffled =
+        animals.sort(() => Math.random() - 0.5);
+
+      // Retorna os animais embaralhados
       return res.json(shuffled);
 
     } catch (error: any) {
+
+      // Retorna erro caso algo falhe
       return res.status(500).json({
         error: error.message,
       });
+
     }
   }
 }

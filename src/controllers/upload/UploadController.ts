@@ -4,7 +4,7 @@ class UploadController {
 
   async handle(req: Request, res: Response) {
 
-    const file = req.file;
+    const file = req.file as Express.Multer.File;
 
     if (!file) {
       throw new Error("Erro ao enviar arquivo");

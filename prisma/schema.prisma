@@ -21,8 +21,17 @@ model User {
   balance Float @default(0)
   coins   Int   @default(0)
 
-  level Int @default(1)
-  xp    Int @default(0)
+  //=========================
+  //   ENDEREÇO
+  //========================= 
+
+  cep         String?
+  rua         String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  estado      String?
 
   gameResults  GameResult[]
   quizResults  QuizResult[]
@@ -52,7 +61,6 @@ model Game {
   name       String
   slug       String
   baseCoins  Int          @default(100)
-  baseXP     Int          @default(50)
   created_at DateTime     @default(now())
   results    GameResult[]
 }
@@ -305,6 +313,14 @@ model Order {
   items     OrderItem[]
 
   total     Float
+
+  cep         String
+  rua         String
+  numero      String
+  complemento String?
+  bairro      String
+  cidade      String
+  estado      String
 
   status    String   @default("pending") 
   // pending | on_the_way | delivered

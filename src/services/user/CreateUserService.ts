@@ -34,16 +34,13 @@ class CreateUserService {
 
         // 🎮 HUB ECONOMY START
         coins: 0,
-        xp: 0,
-        level: 1
+        
       },
       select: {
         id: true,
         name: true,
         email: true,
         coins: true,
-        xp: true,
-        level: true,
         role: true
       }
     });

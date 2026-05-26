@@ -21,10 +21,6 @@ class DetailUserService {
         balance: true,
         coins: true,
 
-        // 🧠 progressão
-        xp: true,
-        level: true,
-
         // ❤️ favoritos
         favorites: {
           include: {
