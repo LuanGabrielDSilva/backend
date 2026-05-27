@@ -22,7 +22,14 @@ model User {
   coins   Int   @default(0)
 
   //=========================
-  //   ENDEREÇO
+  // RESET PASSWORD
+  //=========================
+
+  reset_token        String?
+  reset_token_expires DateTime?
+
+  //=========================
+  // ENDEREÇO
   //========================= 
 
   cep         String?
@@ -41,7 +48,7 @@ model User {
   favorites    Favorite[]
   comments     Comment[]
   expeditions  Expedition[]
-  orders Order[]
+  orders       Order[]
 
   @@map("users")
 }

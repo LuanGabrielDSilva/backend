@@ -14,29 +14,21 @@ import { AuthUserController } from "./controllers/user/AuthUserController";
 import { DetailuserController } from "./controllers/user/DetailUserController";
 import { ListUserController } from "./controllers/user/ListUserController";
 import { DeleteUserController } from "./controllers/user/DeleteUserController";
-import { UpdateUserController } from "./controllers/user/UpdateUserController";
+
+// ✅ NOVO CONTROLLER (substituindo o antigo)
+import { EditUserController } from "./controllers/user/EditUserController";
 
 /* =========================================================
-   ❤️ FAVORITES
+   OUTROS IMPORTS (mantidos)
 ========================================================= */
 import { CreateFavoriteController } from "./controllers/favorite/CreateFavoriteController";
 import { ListFavoritesController } from "./controllers/favorite/ListFavoritesController";
 import { DeleteFavoriteController } from "./controllers/favorite/DeleteFavoriteController";
 
-/* =========================================================
-   📤 UPLOAD
-========================================================= */
 import { UploadController } from "./controllers/upload/UploadController";
-
-/* =========================================================
-   💬 COMMENTS
-========================================================= */
 import { ListCommentsController } from "./controllers/comment/ListCommentsController";
 import { CreateCommentController } from "./controllers/comment/CreateCommentController";
 
-/* =========================================================
-   🛣️ ROUTES FILES
-========================================================= */
 import animalRoutes from "./routes/animal.routes";
 import cartRoutes from "./routes/cart.routes";
 import eraRoutes from "./routes/era.routes";
@@ -48,42 +40,29 @@ import productRoutes from "./routes/product.routes";
 import expeditionRoutes from "./routes/expedition.routes";
 import orderRoutes from "./routes/order.routes";
 import foodRoutes from "./routes/food.routes";
+import authRoutes from "./routes/auth.routes";
 
 const router = Router();
 
-const upload = multer(
-  uploadConfig.upload("./tmp")
-);
+const upload = multer(uploadConfig.upload("./tmp"));
 
 /* =========================================================
    👤 USERS
 ========================================================= */
 
-router.post(
-  "/users",
-  new CreateUserController().handle
-);
+router.post("/users", new CreateUserController().handle);
 
-router.post(
-  "/session",
-  new AuthUserController().handle
-);
+router.post("/session", new AuthUserController().handle);
 
-router.get(
-  "/me",
-  isAuthenticated,
-  new DetailuserController().handle
-);
+router.get("/me", isAuthenticated, new DetailuserController().handle);
 
-router.get(
-  "/users",
-  new ListUserController().handle
-);
+router.get("/users", new ListUserController().handle);
 
+// ✅ ROTA ATUALIZADA - EDITAR NOME E SENHA
 router.put(
   "/users/:id",
   isAuthenticated,
-  new UpdateUserController().handle
+  new EditUserController().handle
 );
 
 router.delete(
@@ -93,166 +72,40 @@ router.delete(
 );
 
 /* =========================================================
-   🌍 ERAS
+   RESTANTE DO ARQUIVO (mantido igual)
 ========================================================= */
 
-router.use(
-  "/eras",
-  eraRoutes
-);
+router.use("/eras", eraRoutes);
+router.use("/animals", animalRoutes);
+router.use("/periodos", periodoRoutes);
+router.use("/wallet", walletRoutes);
+router.use("/reward", rewardRoutes);
+router.use("/quiz", quizRoutes);
+router.use("/cart", cartRoutes);
+router.use("/auth", authRoutes);
 
-/* =========================================================
-   🦖 ANIMALS
-========================================================= */
+router.get("/products/:id/comments", new ListCommentsController().handle);
+router.post("/products/:id/comments", isAuthenticated, new CreateCommentController().handle);
 
-router.use(
-  "/animals",
-  animalRoutes
-);
+router.post("/upload", upload.single("file"), new UploadController().handle);
 
-/* =========================================================
-   📚 PERIODOS
-========================================================= */
+router.post("/favorites", isAuthenticated, new CreateFavoriteController().handle);
+router.get("/favorites", isAuthenticated, new ListFavoritesController().handle);
+router.delete("/favorites", isAuthenticated, new DeleteFavoriteController().handle);
 
-router.use(
-  "/periodos",
-  periodoRoutes
-);
-
-/* =========================================================
-   💰 WALLET
-========================================================= */
-
-router.use(
-  "/wallet",
-  walletRoutes
-);
-
-/* =========================================================
-   🪙 REWARDS
-========================================================= */
-
-router.use(
-  "/reward",
-  rewardRoutes
-);
-
-/* =========================================================
-   🧠 QUIZ
-========================================================= */
-
-router.use(
-  "/quiz",
-  quizRoutes
-);
-
-/* =========================================================
-   🛒 CART
-========================================================= */
-
-router.use(
-  "/cart",
-  cartRoutes
-);
-/* =========================================================
-   💬 COMMENTS
-========================================================= */
-
-router.get(
-  "/products/:id/comments",
-  new ListCommentsController().handle
-);
-
-router.post(
-  "/products/:id/comments",
-  isAuthenticated,
-  new CreateCommentController().handle
-);
-
-/* =========================================================
-   📤 UPLOAD
-========================================================= */
-
-router.post(
-  "/upload",
-  upload.single("file"),
-  new UploadController().handle
-);
-
-/* =========================================================
-   ❤️ FAVORITES
-========================================================= */
-
-router.post(
-  "/favorites",
-  isAuthenticated,
-  new CreateFavoriteController().handle
-);
-
-router.get(
-  "/favorites",
-  isAuthenticated,
-  new ListFavoritesController().handle
-);
-
-router.delete(
-  "/favorites",
-  isAuthenticated,
-  new DeleteFavoriteController().handle
-);
-
-/* =========================================================
-   📦 PRODUCTS
-========================================================= */
-
-router.use(
-  "/products",
-  productRoutes
-);
-
-/* =========================================================
-   🧭 EXPEDITIONS
-========================================================= */
-
-router.use(
-  "/expeditions",
-  expeditionRoutes
-);
-
-/* =========================================================
-   📊 ADMIN STATS
-========================================================= */
-
-router.get(
-  "/admin/stats",
-  async (req, res) => {
-
-    const users =
-      await prismaClient.user.count();
-
-    const eras =
-      await prismaClient.era.count();
-
-    const animals =
-      await prismaClient.animal.count();
-
-    return res.json({
-      users,
-      eras,
-      animals
-    });
-
-  }
-);
-
-/*================================
-              ORDER
-==================================*/
-
+router.use("/products", productRoutes);
+router.use("/expeditions", expeditionRoutes);
 router.use("/orders", orderRoutes);
 
-/* ================
-        FOOD 
-===================*/
+/* =========================================================
+   ADMIN STATS
+========================================================= */
+router.get("/admin/stats", async (req, res) => {
+  const users = await prismaClient.user.count();
+  const eras = await prismaClient.era.count();
+  const animals = await prismaClient.animal.count();
+
+  return res.json({ users, eras, animals });
+});
 
 export { router };

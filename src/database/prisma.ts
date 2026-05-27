@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
-// 🧠 instância única do Prisma (evita múltiplas conexões)
-export const prisma = new PrismaClient();
+const prismaClient = new PrismaClient();
+
+export default prismaClient;
