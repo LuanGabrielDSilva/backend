@@ -1,32 +1,17 @@
 import { Request, Response } from "express";
-import prismaClient from "../../prisma";
+import { DeleteProductService } from "../../services/product/DeleteProductService";
 
 class DeleteProductController {
-
   async handle(req: Request, res: Response) {
 
     const { id } = req.params;
 
-    // remove variantes
-    await prismaClient.productVariant.deleteMany({
-      where: {
-        productId: id
-      }
-    });
+    const service = new DeleteProductService();
 
-    // remove produto
-    await prismaClient.product.delete({
-      where: {
-        id
-      }
-    });
+    const result = await service.execute(id);
 
-    return res.json({
-      message: "Produto deletado"
-    });
-
+    return res.json(result);
   }
-
 }
 
 export { DeleteProductController };

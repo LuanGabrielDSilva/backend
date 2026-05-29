@@ -19,70 +19,44 @@ class CreateAnimalController {
 
     // 🔥 Dados enviados pelo frontend
     const {
-      name,
-      size,
-      periodoId,
-      image,
-      dieta,
-      habitat,
-      clima,
-      local,
-      descoberta,
-      scientificName,
-      weight,
-      locomotion,
-      defense,
-      description
-    } = req.body;
+  name,
+  size,
+  periodoId,
+  image,
+  dieta,
+  habitat,
+  clima,
+  local,
+  descoberta,
+  scientificName,
+  weight,
+  locomotion,
+  defense,
+  description,
+  preyIds
+} = req.body;
 
     // 🔥 Instancia o service
     const service = new CreateAnimalService();
 
     // 🔥 Executa criação do animal
     const animal = await service.execute({
-
-      // Nome do animal
-      name,
-
-      // Tamanho
-      size,
-
-      // ID do período geológico
-      periodoId,
-
-      // URL da imagem
-      image,
-
-      // Dieta
-      dieta,
-
-      // Habitat
-      habitat,
-
-      // Clima em que vivia
-      clima,
-
-      // Local encontrado
-      local,
-
-      // Descoberta do fóssil
-      descoberta,
-
-      // Nome científico
-      scientificName,
-
-      // Peso
-      weight,
-
-      // Locomoção
-      locomotion,
-
-      // Defesa
-      defense,
-
-      // Descrição geral
-      description
-    });
+  name,
+  size,
+  periodoId,
+  image,
+  dieta,
+  habitat,
+  clima,
+  local,
+  descoberta,
+  scientificName,
+  weight,
+  locomotion,
+  defense,
+  description,
+  preyIds
+});
 
     // 🔥 Retorna animal criado
     return res.json(animal);

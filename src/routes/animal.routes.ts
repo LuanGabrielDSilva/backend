@@ -5,7 +5,7 @@ import { ListAnimalController } from "../controllers/animal/ListAnimalController
 import { DeleteAnimalController } from "../controllers/animal/DeleteAnimalController";
 import { UpdateAnimalController } from "../controllers/animal/UpdateAnimalController";
 import { ListAnimalsRandBySize } from "../controllers/animal/ListAnimalsRandBySize";
-import { ListAnimalByEraIdController } from "../controllers/animal/ListAnimalByEraId";
+import { ListAnimalByEraIdController } from "../controllers/animal/ListAnimalByEraIdController";
 import { DetailAnimalController } from "../controllers/animal/DetailAnimalController";
 import { UpdateFoodChainController } from "../controllers/food/UpdateFoodChainController";
 

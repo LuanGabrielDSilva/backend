@@ -2,31 +2,22 @@ import prismaClient from "../../prisma";
 
 interface AnimalRequest {
   id: string;
-
   name?: string;
   scientificName?: string;
-
   size?: string;
   weight?: string;
-
-  eraId?: string;
   image?: string;
-
   dieta?: string;
   habitat?: string;
   clima?: string;
-
   locomotion?: string;
   defense?: string;
-
   local?: string;
   descoberta?: string;
-
   description?: string;
-
   periodoId?: string;
-
   preyIds?: string[];
+  predatorIds?: string[];
 }
 
 class UpdateAnimalService {
@@ -37,7 +28,6 @@ class UpdateAnimalService {
     scientificName,
     size,
     weight,
-    eraId,
     image,
     dieta,
     habitat,
@@ -48,7 +38,8 @@ class UpdateAnimalService {
     descoberta,
     description,
     periodoId,
-    preyIds
+    preyIds,
+    predatorIds
   }: AnimalRequest) {
 
     if (!id) {
@@ -69,6 +60,10 @@ class UpdateAnimalService {
       ? [...new Set(preyIds)].filter(Boolean)
       : [];
 
+    const uniquePredatorIds = predatorIds
+      ? [...new Set(predatorIds)].filter(Boolean)
+      : [];
+
     // 🦖 atualiza dados do animal
     await prismaClient.animal.update({
 
@@ -85,8 +80,6 @@ class UpdateAnimalService {
         ...(size !== undefined && { size }),
 
         ...(weight !== undefined && { weight }),
-
-        ...(eraId !== undefined && { eraId }),
 
         ...(image !== undefined && { image }),
 
@@ -128,6 +121,43 @@ class UpdateAnimalService {
 
     // 🍖 atualiza cadeia alimentar
     if (preyIds !== undefined) {
+
+      if (uniquePreyIds.includes(id)) {
+          throw new Error(
+            "Um animal não pode ser presa dele mesmo"
+          );
+        }
+
+        if (uniquePredatorIds.includes(id)) {
+          throw new Error(
+            "Um animal não pode ser predador dele mesmo"
+          );
+        }
+
+        if (predatorIds !== undefined) {
+
+  await prismaClient.predatorRelation.deleteMany({
+    where: {
+      preyId: id
+    }
+  });
+
+  if (uniquePredatorIds.length > 0) {
+
+    await prismaClient.predatorRelation.createMany({
+
+      data: uniquePredatorIds.map(predatorId => ({
+        predatorId,
+        preyId: id
+      })),
+
+      skipDuplicates: true
+
+    });
+
+  }
+
+}
 
       // remove relações antigas
       await prismaClient.predatorRelation.deleteMany({

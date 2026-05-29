@@ -15,9 +15,7 @@ class UpdateAnimalController {
       scientificName,
       size,
       weight,
-      eraId,
       image,
-
       dieta,
       habitat,
       clima,
@@ -26,12 +24,9 @@ class UpdateAnimalController {
       descoberta,
       local,
       description,
-
       periodoId,
-
-      // 🦖 lista de presas do animal
-      // usada para criar relações predador/presa
-      preyIds
+      preyIds,
+      predatorIds
 
     } = req.body;
 
@@ -41,16 +36,12 @@ class UpdateAnimalController {
 
     // 🚀 executa atualização do animal
     const animal = await service.execute({
-
       id,
-
       name,
       scientificName,
       size,
       weight,
-      eraId,
       image,
-
       dieta,
       habitat,
       clima,
@@ -59,13 +50,9 @@ class UpdateAnimalController {
       descoberta,
       local,
       description,
-
       periodoId,
-
-      // 🦴 envia as presas para atualizar
-      // cadeia alimentar
-      preyIds
-
+      preyIds,
+      predatorIds
     });
 
     // 📤 retorna animal atualizado
